@@ -83,6 +83,8 @@ class UIExample: public Platform::Application, public Interconnect::Receiver
 
     private:
         void drawEvent() override;
+        void mousePressEvent(MouseEvent& event) override;
+        void mouseReleaseEvent(MouseEvent& event) override;
         void keyPressEvent(KeyEvent& event) override;
         void textInputEvent(TextInputEvent& event) override;
         
@@ -134,6 +136,8 @@ UIExample::UIExample(const Arguments& arguments): Platform::Application{argument
     Interconnect::connect(_baseUiPlane->f0, &Ui::Input::valueChanged, *this, &UIExample::enableApplyButton);
     Interconnect::connect(_baseUiPlane->apply, &Ui::Button::tapped, *this, &UIExample::apply);
     Interconnect::connect(_baseUiPlane->reset, &Ui::Button::tapped, *this, &UIExample::reset);
+
+    apply();    
 }
 
 void UIExample::drawEvent()
@@ -157,17 +161,6 @@ void UIExample::drawEvent()
     GL::Renderer::disable(GL::Renderer::Feature::Blending);
 
     swapBuffers();
-    redraw();
-}
-
-void UIExample::keyPressEvent(KeyEvent& event)
-{
-    /* If an input is focused, pass the events only to the UI */
-    if(isTextInputActive() && _ui->focusedInputWidget()) 
-    {
-        if(!_ui->focusedInputWidget()->handleKeyPress(event)) return;
-    }
-
     redraw();
 }
 
@@ -204,6 +197,30 @@ void UIExample::reset() {
 void UIExample::textInputEvent(TextInputEvent& event)
 {
     if(isTextInputActive() && _ui->focusedInputWidget() && _ui->focusedInputWidget()->handleTextInput(event))
+        redraw();
+}
+
+
+
+void UIExample::keyPressEvent(KeyEvent& event)
+{
+    /* If an input is focused, pass the events only to the UI */
+    if(isTextInputActive() && _ui->focusedInputWidget()) 
+    {
+        if(!_ui->focusedInputWidget()->handleKeyPress(event)) return;
+    }
+
+    redraw();
+}
+
+void UIExample::mousePressEvent(MouseEvent& event) {
+    if(!_ui->handlePressEvent(event.position())) return;
+
+    redraw();
+}
+
+void UIExample::mouseReleaseEvent(MouseEvent& event) {
+    if(_ui->handleReleaseEvent(event.position()))
         redraw();
 }
 
