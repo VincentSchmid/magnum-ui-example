@@ -64,9 +64,9 @@ struct BaseUiPlane: Ui::Plane {
 class UIExample: public Platform::Application, public Interconnect::Receiver
 {
     private:
-        float _metalness;
-        float _roughness;
-        float _f0;
+        Float _metalness = 0.5f;
+        Float _roughness = 0.25f;
+        Float _f0 = 0.5f;
 
         GL::Mesh mesh;
         Vector3 lightPosition;
@@ -97,6 +97,7 @@ class UIExample: public Platform::Application, public Interconnect::Receiver
 UIExample::UIExample(const Arguments& arguments): Platform::Application{arguments, Configuration{}
         .setTitle("Magnum UI Example")}
 {
+    /* Draw Box code */
     GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
     GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 
@@ -145,6 +146,7 @@ void UIExample::drawEvent()
     GL::defaultFramebuffer.clear(
         GL::FramebufferClear::Color|GL::FramebufferClear::Depth);
     
+    /* Draw Box "*/
     shader.setLightPositions({lightPosition})
         .setDiffuseColor(activeShape)
         .setAmbientColor(Color3::fromHsv({activeShape.hue(), 1.0f, 0.3f}))
@@ -199,8 +201,6 @@ void UIExample::textInputEvent(TextInputEvent& event)
     if(isTextInputActive() && _ui->focusedInputWidget() && _ui->focusedInputWidget()->handleTextInput(event))
         redraw();
 }
-
-
 
 void UIExample::keyPressEvent(KeyEvent& event)
 {
